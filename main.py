@@ -1,6 +1,5 @@
 import time
 
-
 import os
 from pathlib import Path
 import filetype
@@ -24,8 +23,11 @@ class Program(FileSystemEventHandler):
             file_path = os.path.join(DOWNLOAD_FOLDER, filename)
 
             try:
+                # pegar a extensão do arquivo
                 kind = filetype.guess(file_path)
                 file_extension = kind.extension
                 print(file_extension, kind.mime, file_path)
             except:
                 print("no extension")
+
+        
