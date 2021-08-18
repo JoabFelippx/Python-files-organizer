@@ -2,8 +2,6 @@ import time
 
 import os
 from pathlib import Path
-# import filetype
-import mimetypes
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -14,23 +12,26 @@ DOWNLOAD_FOLDER = str(Path.home() / 'Downloads')
 
 destination_folder = {
 
-    'image': os.path.join(DOWNLOAD_FOLDER, 'Arquivos_de_imagem'),
-    'video': os.path.join(DOWNLOAD_FOLDER, 'Arquivos_de_video'),
-    'audio': os.path.join(DOWNLOAD_FOLDER, 'Arquivos_de_audio'),
-    'text': os.path.join(DOWNLOAD_FOLDER, 'Arquivos_de_texto'),
-    'pdf': os.path.join(DOWNLOAD_FOLDER, 'Arquivos_pdf'),
-    
-    'vnd.openxmlformats-officedocument.spreadsheetml.sheet': os.path.join(DOWNLOAD_FOLDER, 'Arquivos_excel'),
-    'vnd.ms-excel': os.path.join(DOWNLOAD_FOLDER, 'Arquivos_excel'),
-    'vnd.openxmlformats-officedocument.spreadsheetml.template': os.path.join(DOWNLOAD_FOLDER, 'Arquivos_excel'),
+    'AUDIO': ['.3gp', '.aa', '.aac', '.aax', '.act', '.aiff', '.alac', '.amr', '.ape', '.au', '.awb', '.dss', '.dvf', '.flac', '.gsm', '.iklax', '.ivs', '.m4a', '.m4b', '.m4p', '.mmf', '.mp3', '.mpc', '.msv', '.nmf', '.ogg', '.oga', '.mogg', '.opus', '.ra', '.rm', '.raw', '.rf64', '.sln', '.tta', '.voc', '.vox', '.wav', '.wma', '.wv', '.webm', '.8svx', '.cda'],
+
+    'IMAGES': [".jpeg", ".jpg", '.JPG', ".tiff", ".gif", ".bmp", ".png", ".PNG", ".bpg", ".svg", ".heif", ".psd", '.jfif'],
+
+    'VIDEO': ['.flv', '.f4v', '.f4p', '.f4a', '.f4b', '.nsv', '.roq', '.mxf', '.3g2', '.3gp', '.svi', '.m4v', '.mpg', '.mpeg', '.m2v', '.mpg', '.mp2', '.mpeg', '.mpe', '.mpv', '.mp4', '.m4p', '.m4v', '.amv', '.asf', '.viv', '.rmvb', '.rm', '.yuv', '.wmv', '.mov', '.qt', '.MTS', '.M2TS', '.TS', '.avi', 'gifv', '.gif', '.drc', '.ogv', '.vob', '.flv', '.mkv', '.webm'],
+ 
+    'WORD': ['.doc', '.dot', '.wbk', '.docx', '.docm', '.dotx', '.dotm', '.docb',
+             ],
+
+    'TEXTO': ['.txt'],
+
+    'PDF': ['.pdf'],
+
+    'EXECEL': ['.xls', '.xlt', '.xlm', '.xlsx', '.xlsm', '.xltx', '.xltm', '.xlsb', '.xla', '.xlam', '.xll', 'xlw'],
+
+    'PowerPoint': ['.ppt', '.pot', '.pps', '.pptx', '.pptm', '.potx', '.potm', '.ppam', '.ppsx', '.ppsm', '.sldx', '.sldm'],
+
+    'Winrar': ['.ace', '.taz', '.tbz', '.uu', '.bz', '.jar', '.lha', '.rev', '.tbz2', '.tgz', '.uue', '.xxe', '.7z', '.arj', '.lzh', '.z', '.zip', '.bz2', '.cab', '.gz', '.tar', '.iso', '.rar', '.r00']
 
 
-    
-    'x-bittorrent': os.path.join(DOWNLOAD_FOLDER, 'Arquivos_torrent'),
-    'x-zip-compressed': os.path.join(DOWNLOAD_FOLDER, 'Arquivos_winrar'),
-    'x-msdownload': os.path.join(DOWNLOAD_FOLDER, 'Arquivos_exe'),
-    # 'vnd.openxmlformats-officedocument.presentationml.presentation': os.path.join(DOWNLOAD_FOLDER, 'Arquivos_pptx'),
-    'x-tar': os.path.join(DOWNLOAD_FOLDER, 'Arquivos_winrar'),
 
 }
 
@@ -44,27 +45,22 @@ class Program(FileSystemEventHandler):
         for filename in os.listdir(DOWNLOAD_FOLDER):
             cont = 0
 
-            # caminho de origem do arquivo
-            source_path = os.path.join(DOWNLOAD_FOLDER, filename)
-
+            
+            extension = os.path.splitext(
+                DOWNLOAD_FOLDER + '/' + filename)[1]
             try:
-                # pega mime do arquivo
-                guess_type = mimetypes.guess_type(source_path)
-                mimes = (guess_type[0].split('/')[0],
-                         guess_type[0].split('/')[1])
-
-                # definir o caminho de destino
-                if mimes[0] != 'application':
-                    new_path = destination_folder[mimes[0]]
-                    new_file_path = os.path.join(new_path, filename)
-                
-                new_path = destination_folder[mimes[1]]
-                new_file_path = os.path.join(new_path, filename)
-
+                # determinar o destino do arquivo
+                for c in destination_folder.items():
+                    for i in destination_folder[c[0]]:
+                        if i == extension:
+                            new_path = os.path.join(DOWNLOAD_FOLDER, c[0])
+                            path = c[0] + '/' + filename
+                            new_file_path = os.path.join(DOWNLOAD_FOLDER, path)
+                            # caminho de origem do arquivo
+                            source_path = os.path.join(
+                                DOWNLOAD_FOLDER, filename)
             except:
-                print(filename)
-                print("no extension")
-
+                extension = ''
             try:
                 # verificar se o caminho de destino existe
                 if not os.path.exists(new_path):
@@ -87,7 +83,8 @@ class Program(FileSystemEventHandler):
                 os.rename(source_path, new_file_path)
 
             except:
-                print('there is no path to this extension')
+                print(extension)
+                print('Error')
 
 
 event_handler = Program()
