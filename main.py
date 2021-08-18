@@ -45,16 +45,19 @@ class Program(FileSystemEventHandler):
         for filename in os.listdir(DOWNLOAD_FOLDER):
             cont = 0
 
-            
+            # extensão do arquivo 
             extension = os.path.splitext(
                 DOWNLOAD_FOLDER + '/' + filename)[1]
+
             try:
                 # determinar o destino do arquivo
                 for c in destination_folder.items():
                     for i in destination_folder[c[0]]:
                         if i == extension:
+                            # caminho da nova pasta 
                             new_path = os.path.join(DOWNLOAD_FOLDER, c[0])
                             path = c[0] + '/' + filename
+                            # novo caminho do arquivo
                             new_file_path = os.path.join(DOWNLOAD_FOLDER, path)
                             # caminho de origem do arquivo
                             source_path = os.path.join(
@@ -74,6 +77,7 @@ class Program(FileSystemEventHandler):
 
                     # numerar arquivo baseado na quantidade de arquivos com mesmo nome
                     new_filename = str(cont) + '-' + filename
+
                     new_file_path = os.path.join(
                         new_path, new_filename)
                     file_exist = os.path.isfile(new_file_path)
@@ -83,7 +87,6 @@ class Program(FileSystemEventHandler):
                 os.rename(source_path, new_file_path)
 
             except:
-                print(extension)
                 print('Error')
 
 
